@@ -112,8 +112,8 @@ function quicksort(
   numbers: number[],
   direction: "ASC" | "DESC" = "ASC"
 ): number[] {
-  const copyNumbers = numbers;
-  quicksortRun(copyNumbers, direction, 0, numbers.length - 1);
+  const copyNumbers = [...numbers];
+  quicksortRun(copyNumbers, direction, 0, copyNumbers.length - 1);
   return copyNumbers;
 }
 
