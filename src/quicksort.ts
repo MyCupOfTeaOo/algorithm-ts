@@ -1,32 +1,10 @@
-function insertSort(
-  numbers: number[],
-  direction: "ASC" | "DESC",
-  start: number,
-  end: number
-) {
-  for (let i = start + 1; i <= end; i += 1) {
-    const current = numbers[i];
-    let prevIndex = i - 1;
-    if (direction === "ASC") {
-      while (prevIndex >= start && current < numbers[prevIndex]) {
-        prevIndex -= 1;
-      }
-    } else {
-      while (prevIndex >= start && current > numbers[prevIndex]) {
-        prevIndex -= 1;
-      }
-    }
-
-    if (prevIndex !== i - 1) {
-      numbers.splice(prevIndex + 1, 0, numbers.splice(i, 1)[0]);
-    }
-  }
-  return numbers;
-}
+import { insertSortRun } from "./insertSort";
+import { Direction } from "./interface";
+import { swap } from "./utils";
 
 function numberOfThree(
   numbers: number[],
-  direction: "ASC" | "DESC",
+  direction: Direction,
   start: number,
   end: number
 ): number {
@@ -34,23 +12,23 @@ function numberOfThree(
   if (direction === "ASC") {
     // 这边交换是为了后续的处理基准在最右边
     if (numbers[middle] > numbers[start]) {
-      [numbers[middle], numbers[start]] = [numbers[start], numbers[middle]];
+      swap(numbers, middle, start);
     }
     if (numbers[start] > numbers[end]) {
-      [numbers[start], numbers[end]] = [numbers[end], numbers[start]];
+      swap(numbers, start, end);
     }
     if (numbers[middle] > numbers[end]) {
-      [numbers[middle], numbers[end]] = [numbers[end], numbers[middle]];
+      swap(numbers, middle, end);
     }
   } else {
     if (numbers[middle] < numbers[start]) {
-      [numbers[middle], numbers[start]] = [numbers[start], numbers[middle]];
+      swap(numbers, middle, start);
     }
     if (numbers[start] < numbers[end]) {
-      [numbers[start], numbers[end]] = [numbers[end], numbers[start]];
+      swap(numbers, start, end);
     }
     if (numbers[middle] < numbers[end]) {
-      [numbers[middle], numbers[end]] = [numbers[end], numbers[middle]];
+      swap(numbers, middle, end);
     }
   }
   // numbers[middle] <= numbers[end] <= numbers[start]
@@ -59,7 +37,7 @@ function numberOfThree(
 
 function partition(
   numbers: number[],
-  direction: "ASC" | "DESC",
+  direction: Direction,
   start: number,
   end: number
 ): [number, number] {
@@ -72,32 +50,29 @@ function partition(
       (direction === "ASC" && numbers[i] <= pivot) ||
       (direction === "DESC" && numbers[i] >= pivot)
     ) {
-      [numbers[pivotIndex], numbers[i]] = [numbers[i], numbers[pivotIndex]];
+      swap(numbers, pivotIndex, i);
       // 聚集优化
       if (numbers[pivotIndex] === pivot) {
         sameNumber += 1;
       } else {
-        [numbers[pivotIndex - sameNumber], numbers[pivotIndex]] = [
-          numbers[pivotIndex],
-          numbers[pivotIndex - sameNumber],
-        ];
+        swap(numbers, pivotIndex - sameNumber, pivotIndex);
       }
       pivotIndex += 1;
     }
   }
-  [numbers[pivotIndex], numbers[end]] = [numbers[end], numbers[pivotIndex]];
+  swap(numbers, pivotIndex, end);
   return [pivotIndex - sameNumber, pivotIndex];
 }
 
-function quicksortRun(
+export function quickSortRun(
   numbers: number[],
-  direction: "ASC" | "DESC",
+  direction: Direction,
   start: number,
   end: number
 ) {
   // 栈深度过低使用插入排序优化
   if (end - start + 1 < 10) {
-    insertSort(numbers, direction, start, end);
+    insertSortRun(numbers, direction, start, end);
     return;
   }
   // 递归优化,优化递归栈深度
@@ -108,18 +83,15 @@ function quicksortRun(
       start,
       end
     );
-    quicksortRun(numbers, direction, start, leftPivotIndex - 1);
+    quickSortRun(numbers, direction, start, leftPivotIndex - 1);
     start = rightPivotIndex + 1;
   }
 }
 
-function quicksort(
-  numbers: number[],
-  direction: "ASC" | "DESC" = "ASC"
-): number[] {
+function quickSort(numbers: number[], direction: Direction = "ASC"): number[] {
   const copyNumbers = [...numbers];
-  quicksortRun(copyNumbers, direction, 0, copyNumbers.length - 1);
+  quickSortRun(copyNumbers, direction, 0, copyNumbers.length - 1);
   return copyNumbers;
 }
 
-export default quicksort;
+export default quickSort;
