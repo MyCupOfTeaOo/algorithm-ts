@@ -1,4 +1,4 @@
-import quickSort from "./quicksort";
+import quickSort from "./quickSort";
 
 test("quickSort", () => {
   expect(quickSort([1, 3, 2, 4, 5, 3])).toMatchObject([1, 2, 3, 3, 4, 5]);
