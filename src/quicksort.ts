@@ -65,28 +65,28 @@ function partition(
 ): [number, number] {
   // 基准优化,三数取中指
   const pivot = numberOfThree(numbers, direction, start, end);
-  let middle = start;
+  let pivotIndex = start;
   let sameNumber = 0;
   for (let i = start; i < end; i += 1) {
     if (
       (direction === "ASC" && numbers[i] <= pivot) ||
       (direction === "DESC" && numbers[i] >= pivot)
     ) {
-      [numbers[middle], numbers[i]] = [numbers[i], numbers[middle]];
+      [numbers[pivotIndex], numbers[i]] = [numbers[i], numbers[pivotIndex]];
       // 聚集优化
-      if (numbers[middle] === pivot) {
+      if (numbers[pivotIndex] === pivot) {
         sameNumber += 1;
       } else {
-        [numbers[middle - sameNumber], numbers[middle]] = [
-          numbers[middle],
-          numbers[middle - sameNumber],
+        [numbers[pivotIndex - sameNumber], numbers[pivotIndex]] = [
+          numbers[pivotIndex],
+          numbers[pivotIndex - sameNumber],
         ];
       }
-      middle += 1;
+      pivotIndex += 1;
     }
   }
-  [numbers[middle], numbers[end]] = [numbers[end], numbers[middle]];
-  return [middle - sameNumber, middle];
+  [numbers[pivotIndex], numbers[end]] = [numbers[end], numbers[pivotIndex]];
+  return [pivotIndex - sameNumber, pivotIndex];
 }
 
 function quicksortRun(
@@ -102,9 +102,14 @@ function quicksortRun(
   }
   // 递归优化,优化递归栈深度
   while (start < end) {
-    const [leftPivot, rightPivot] = partition(numbers, direction, start, end);
-    quicksortRun(numbers, direction, start, leftPivot - 1);
-    start = rightPivot + 1;
+    const [leftPivotIndex, rightPivotIndex] = partition(
+      numbers,
+      direction,
+      start,
+      end
+    );
+    quicksortRun(numbers, direction, start, leftPivotIndex - 1);
+    start = rightPivotIndex + 1;
   }
 }
 
